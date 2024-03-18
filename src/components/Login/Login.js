@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
-import { AuthContext } from '../../contexts/userContext';
+import { useState } from 'react';
+import { AuthContext } from '../../contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
 
-    const { user } = useContext(AuthContext);
+    const { logIn, setUser } = useContext(AuthContext);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
 
     const handleSubmit = (e) => {
@@ -15,7 +19,15 @@ const Login = () => {
         const email = form.email.value;
         const password = form.password.value;
 
-
+        logIn(email, password)
+            .then(result => {
+                const user = result.user
+                form.reset();
+                navigate('/');
+            })
+            .catch((error) => {
+                setError(error.message);
+            })
     }
 
 
@@ -46,6 +58,7 @@ const Login = () => {
                 <button className='btn bg-blue-300 text-black'>Sign in with Google</button>
                 <p>New to Ema-John? <Link to="/signup" className='text-yellow-300'>Register Now!</Link></p>
             </form>
+            <p className='text-red-300'>{error}</p>
 
 
 
